@@ -1,6 +1,7 @@
 {
     "name": "fabrazer/yii2-helpers",
     "description": "",
+    "license": "MIT",
     "require": {
         "php": ">=5.4.0"
     }
