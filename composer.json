@@ -1,0 +1,7 @@
+{
+    "name": "Fabrazer/yii2-helpers",
+    "description": "",
+    "require": {
+        "php": ">=5.4.0",
+    }
+}
