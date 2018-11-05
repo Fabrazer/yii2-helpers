@@ -18,41 +18,55 @@ $ php composer.phar require fabrazer/yii2-helpers "@dev"
 
 1. **EnableRelatedModelSearch**
 
-    1. Add missing rules to your search model
+	1. Enable trait
+
+		```
+		namespace app\models\search;
+
+		use fabrazer\helpers\traits\EnableRelatedModelSearch;
+
+		class TourSearch extends Tour
+		{
+			use EnableRelatedModelSearch;
+
+			// Your code ...
+		}
+		```
+
+    2. Add missing rules to your search model
     
-          ```
-          public function rules()
-          {
-            $rules = [
-              // Your rules
-            ];
+		```
+		public function rules()
+		{
+			$rules = [
+				// Your rules
+			];
 
-            // Add rules of the model relations "city" and "country"
-            $this->enableRelatedModelSearchRules(['city', 'country'], $rules);
+			// Add rules of the relations "city" and "country"
+			$this->enableRelatedModelSearchRules(['city', 'country'], $rules);
 
-            return $rules;
-          }
-          ```
+			return $rules;
+		}
+		```
         
-      2. Add missing attributes
+	3. Add missing attributes
       
-          ```
-          public function attributes()
-          {
-            // Add attributes of the model relations "city" and "country"
-            return $this->enableRelatedModelSearchAttributes(['city', 'country'], parent::attributes());
-          }
-          ```
+		```
+		public function attributes()
+		{
+			// Add attributes of the relations "city" and "country"
+			return $this->enableRelatedModelSearchAttributes(['city', 'country'], parent::attributes());
+		}
+		```
         
-      3. Add sorting and filtering to the query
+	4. Add sorting and filtering to the query
       
-          ```
-          public function search($params)
-          {
-            // Your code ...
+		```
+		public function search($params)
+		{
+			// Your code ...
 
-            // Add sorting and filtering to the query
-            $this->enableRelatedModelSearch(['city', 'country'], $dataProvider);
-          }
-          ```
-          
+			// Add sorting and filtering to the query
+			$this->enableRelatedModelSearch(['city', 'country'], $dataProvider);
+		}
+		```
