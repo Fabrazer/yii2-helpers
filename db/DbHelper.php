@@ -8,6 +8,7 @@ namespace fabrazer\helpers\db;
 
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 
 /**
@@ -27,13 +28,23 @@ class DbHelper
     public static function FilterWhereMultiple(ActiveQuery &$query, ActiveRecord $model, $attribute, $operator = 'AND')
     {
 		$attribute = explode('.', $attribute);
+
+		// Get value from model
+		if(static::_getAlias($query, $model) == $attribute[0]) {
+			$values = ArrayHelper::getValue($model, implode('.', array_slice($attribute, 1)));
+		} else {
+			$_a = implode('.', $attribute);
+
+			// Get value from model
+			if($model->hasAttribute($_a)) {
+				$values = $model->getAttribute($_a);
+			}
+			// Get value from model's relation
+			else {
+				$values = ArrayHelper::getValue($model, $_a);
+			}
+		}
 		
-        $values = $model->getAttribute(implode('.', $attribute));
-
-        if(empty($values) && strpos($model->tableName(), $attribute[0]) !== false) {
-            $values = $model->getAttribute($attribute[1]);
-        }
-
         if(empty($values) && !is_string($values)) {
             return;
 		}		
@@ -58,5 +69,15 @@ class DbHelper
         } else {
             throw new \Exception('Invalid operator.');
         }
-    }
+	}
+	
+	private static function _getAlias(ActiveQuery $query, ActiveRecord $model)
+	{
+		$from = $query->getTablesUsedInFrom();
+
+		$alias = array_search('{{'.$model->tableName().'}}', $from);
+
+		return str_replace(['{{', '}}'], null, $alias);
+		#print_r($alias); exit;
+	}
 }
