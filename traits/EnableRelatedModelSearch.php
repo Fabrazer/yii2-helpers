@@ -43,10 +43,6 @@ trait EnableRelatedModelSearch
 			$parts = explode('.', $relation);
 			$class = end($parts);
 
-			if($alias === null) {
-				$alias = $class;
-			}
-
 			$relation = [
 				'alias' => $alias,
 				'relation' => $relation,
@@ -112,7 +108,7 @@ trait EnableRelatedModelSearch
 			#print_r($attribute); echo '<br>'; 
 
             // Add filter
-            DbHelper::FilterWhereMultiple($query, $this, $attribute, $operator);
+            DbHelper::FilterWhereMultiple($query, $this, $attribute, $operator, $relation['alias']);
         }
     }
 
@@ -168,8 +164,12 @@ trait EnableRelatedModelSearch
 			// Resolve relation
 			$_r = $this->_resolveRelation($_r);
 
-            $query = $dataProvider->query;
-            $query->joinWith([$_r['relation'].' as '.$_r['alias']]);
+			$query = $dataProvider->query;
+			if($_r['alias'] === null) {
+				$query->joinWith([$_r['relation'].' as '.$_r['class']]);
+			} else {
+				$query->joinWith([$_r['relation'].' as '.$_r['alias']]);
+			}
 
             $this->_enableRelatedModelSearchSorting($_r, $dataProvider);
             $this->_enableRelatedModelSearchFiltering($_r, $dataProvider, $operator);

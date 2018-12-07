@@ -25,7 +25,7 @@ class DbHelper
      * @param string $attribute
      * @return void
      */
-    public static function FilterWhereMultiple(ActiveQuery &$query, ActiveRecord $model, $attribute, $operator = 'AND')
+    public static function FilterWhereMultiple(ActiveQuery &$query, ActiveRecord $model, $attribute, $operator = 'AND', $alias = null)
     {
 		$attribute = explode('.', $attribute);
 
@@ -53,8 +53,12 @@ class DbHelper
             $values = [$values];
 		}
 		
-		// Convert attribute for query (get the last 2 items from array)
-		$attribute = implode('.', array_slice($attribute, -2));
+		if($alias === null) {
+			// Convert attribute for query (get the last 2 items from array)
+			$attribute = implode('.', array_slice($attribute, -2));
+		} else {
+			$attribute = $alias.'.'.end($attribute);
+		}
 
 
         $condition = ['OR'];
